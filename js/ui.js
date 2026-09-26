@@ -111,8 +111,10 @@
     if (mode === UI.layout) return;
     UI.layout = mode;
     const app = $('#app');
+    app.classList.add('switching');
     app.classList.remove('layout-1', 'layout-2', 'layout-3', 'sheet-open');
     app.classList.add('layout-' + mode);
+    requestAnimationFrame(() => requestAnimationFrame(() => app.classList.remove('switching')));
     const shop = $('#shopCol'), body = $('#panelBody');
     const gp = $('#page-gens'), up = $('#page-upgrades');
     if (mode === 3) {
@@ -702,9 +704,10 @@
     p.innerHTML = '<div class="section-title">Ton</div>' +
       '<div class="opt"><label for="optSfx">Soundeffekte</label><input type="range" id="optSfx" min="0" max="1" step="0.05"></div>' +
       '<div class="opt"><label for="optMusic">Musik</label><input type="range" id="optMusic" min="0" max="1" step="0.05"></div>' +
+      '<div class="opt"><label for="optClick">Klick-Sound<small>Lautstärke des Controller-Klicks</small></label><input type="range" id="optClick" min="0" max="1" step="0.05"></div>' +
       '<div class="section-title">Darstellung</div>' +
       '<div class="opt"><label for="optFmt">Zahlenformat<small>Kurz: 1,5 Mio. · Lang: 1,5 Millionen</small></label><select id="optFmt"><option value="short">Kurz</option><option value="long">Lang</option><option value="sci">Wissenschaftlich</option></select></div>' +
-      '<div class="opt"><label>Röhrenfernseher-Effekt<small>Scanlines & Vignette</small></label><button class="switch" data-opt="crt" aria-label="CRT-Effekt"></button></div>' +
+      '<div class="opt"><label>Röhrenfernseher-Effekt<small>Scanlines & Vignette im Hintergrund</small></label><button class="switch" data-opt="crt" aria-label="CRT-Effekt"></button></div>' +
       '<div class="opt"><label>Animierter Hintergrund</label><button class="switch" data-opt="motion" aria-label="Animierter Hintergrund"></button></div>' +
       '<div class="opt"><label>Partikel & Zahlen</label><button class="switch" data-opt="particles" aria-label="Partikel"></button></div>' +
       '<div class="opt"><label>Bildschirmwackeln & Vibration</label><button class="switch" data-opt="shake" aria-label="Bildschirmwackeln"></button></div>' +
@@ -717,6 +720,8 @@
     $('#optSfx').addEventListener('input', (e) => { E.S.settings.sfx = +e.target.value; UI.applySettings(); });
     $('#optMusic').addEventListener('input', (e) => { E.S.settings.music = +e.target.value; UI.applySettings(); });
     $('#optSfx').addEventListener('change', () => A.play('coin'));
+    $('#optClick').addEventListener('input', (e) => { E.S.settings.clickVol = +e.target.value; });
+    $('#optClick').addEventListener('change', () => A.play('click', { vol: E.S.settings.clickVol, throttle: 0 }));
     $('#optFmt').addEventListener('change', (e) => { E.S.settings.fmt = e.target.value; UI.applySettings(); UI.fullRefresh(); });
     $$('.switch[data-opt]', p).forEach((s) => s.addEventListener('click', () => {
       const k = s.dataset.opt;
@@ -762,7 +767,7 @@
   };
   UI.syncOptions = function () {
     const s = E.S.settings;
-    $('#optSfx').value = s.sfx; $('#optMusic').value = s.music; $('#optFmt').value = s.fmt;
+    $('#optSfx').value = s.sfx; $('#optMusic').value = s.music; $('#optClick').value = s.clickVol; $('#optFmt').value = s.fmt;
     $$('.switch[data-opt]').forEach((b) => b.classList.toggle('on', !!s[b.dataset.opt]));
     const cs = $('#cloudState');
     if (cs) cs.innerHTML = PZ.Main && PZ.Main.cloudStatus ? PZ.Main.cloudStatus() : 'Lokal gespeichert.';

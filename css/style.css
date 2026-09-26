@@ -66,12 +66,12 @@ img { max-width: 100%; }
 
 /* ───────── Hintergrund & CRT ───────── */
 #bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
+/* Scanlines & Vignette nur über dem animierten Hintergrund – nie über Texten */
 #crt {
-  position: fixed; inset: 0; pointer-events: none; z-index: 60;
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background:
-    repeating-linear-gradient(to bottom, rgba(0, 0, 0, calc(var(--crt) * 0.32)) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, calc(var(--crt) * 0.75)) 100%);
-  mix-blend-mode: multiply;
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, calc(var(--crt) * 0.28)) 0 1px, transparent 1px 4px),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, calc(var(--crt) * 0.7)) 100%);
 }
 body.no-crt #crt { display: none; }
 body.crt-flicker #crt { animation: flicker 0.12s steps(2) infinite; }
@@ -566,6 +566,7 @@ input.txt { background: #06050b; color: var(--ink); border: 1px solid var(--line
   box-shadow: 0 -18px 40px rgba(0, 0, 0, 0.55);
 }
 #app.layout-1.sheet-open #panel { transform: translateY(0); }
+#app.switching #panel { transition: none !important; }
 #app.layout-1 #panel::before { content: ''; position: absolute; top: 6px; left: 50%; width: 44px; height: 4px; margin-left: -22px; border-radius: 2px; background: rgba(255, 255, 255, 0.25); }
 #app.layout-1 #tabs { padding-top: 14px; }
 #app.layout-1 { --sheet-h: min(60vh, 620px); --sheet-h: min(60dvh, 620px); }

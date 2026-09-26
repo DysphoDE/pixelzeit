@@ -48,7 +48,7 @@
 
   // Einfache Chiptune-Synth-Sounds als Fallback
   const SYNTH = {
-    click: [['square', 880, 0.03, 0.12]], buy: [['square', 660, 0.05], ['square', 990, 0.07]], upgrade: [['square', 523, 0.06], ['square', 659, 0.06], ['square', 784, 0.06], ['square', 1047, 0.12]],
+    click: [['triangle', 330, 0.05, 0.1]], buy: [['square', 660, 0.05], ['square', 990, 0.07]], upgrade: [['square', 523, 0.06], ['square', 659, 0.06], ['square', 784, 0.06], ['square', 1047, 0.12]],
     deny: [['sawtooth', 140, 0.14]], crit: [['square', 1200, 0.04], ['triangle', 300, 0.1]], coin: [['square', 988, 0.05], ['square', 1319, 0.12]],
     powerup_spawn: [['triangle', 1200, 0.05], ['triangle', 1600, 0.05], ['triangle', 2000, 0.08]], powerup: [['square', 523, 0.05], ['square', 784, 0.05], ['square', 1047, 0.05], ['square', 1568, 0.12]],
     achievement: [['square', 784, 0.08], ['square', 988, 0.08], ['square', 1175, 0.08], ['square', 1568, 0.25]], boss_appear: [['sawtooth', 110, 0.3], ['sawtooth', 98, 0.4]],

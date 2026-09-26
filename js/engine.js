@@ -40,7 +40,7 @@
         bestRunTime: {},
       },
       secrets: {},
-      settings: { sfx: 0.7, music: 0.45, fmt: 'short', crt: true, particles: 2, motion: true, shake: true },
+      settings: { sfx: 0.7, music: 0.45, clickVol: 0.5, fmt: 'short', crt: true, particles: 2, motion: true, shake: true },
       created: Date.now(), lastSave: Date.now(), runStart: Date.now(),
     };
   };

@@ -116,7 +116,7 @@
       altPress = !altPress;
       c.classList.add('press'); c.classList.toggle('alt', altPress);
       clearTimeout(pressT); pressT = setTimeout(() => c.classList.remove('press'), 70);
-      A.play('click', { rate: 0.9 + Math.min(0.6, S.heat / 160) + Math.random() * 0.05, throttle: 18, vol: 0.7 });
+      A.play('click', { rate: 0.94 + S.heat / 500 + Math.random() * 0.06, throttle: 30, vol: S.settings.clickVol });
       UI.floater(x + U.rand(-24, 24), y - 20, '+' + U.fmt(r.value, 1), r.crit ? 'crit' : '');
       if (PZ.FX) PZ.FX.burst(x, y, r.crit ? 16 : 4, ['#ffd23f', '#fff6c2', PZ.ERAS[S.era].accent], r.crit ? 300 : 170);
     }
@@ -268,7 +268,7 @@
       if (offline && offline.gain > 0) UI.offlineModal(offline);
       const w = E.pendingWar(); if (w && !(offline && offline.gain > 0)) setTimeout(() => UI.warModal(w), 300);
     };
-    if (fromHot) afterStart(); else UI.splash(afterStart);
+    if (fromHot || /skipintro/.test(location.search)) afterStart(); else UI.splash(afterStart);
     bindInput();
     // Audio erst nach Nutzerinteraktion
     const unlock = () => { A.unlock(); A.playMusic(A.trackForEra(E.S.era)); };
