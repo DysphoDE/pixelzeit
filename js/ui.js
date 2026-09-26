@@ -802,7 +802,10 @@
   UI.modalOpen = function () { return !!$('#modalRoot .modal-wrap') || !!$('.era-card') || !!$('.crash-screen') || !!$('.pause-screen') || !!$('.splash'); };
 
   const toastQ = [], toastHold = [];
-  UI.flushToasts = function () { while (toastHold.length) UI.toast(toastHold.shift()); };
+  UI.flushToasts = function () {
+    if (document.querySelector('.era-card,.crash-screen,.splash')) { setTimeout(UI.flushToasts, 1000); return; }
+    toastHold.splice(0).forEach((o) => UI.toast(o));
+  };
   UI.toast = function (o) {
     if (document.querySelector('.era-card,.crash-screen,.splash')) { toastHold.push(o); return; }
     const box = $('#toasts');

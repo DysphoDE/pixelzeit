@@ -95,18 +95,26 @@
 
   // ───────── Musik ─────────
   // Bevorzugt Web Audio (lückenlose Loops), sonst <audio loop> (z. B. bei file://)
-  const musicBufs = {}, musicOrder = [];
+  const musicBufs = {}, musicLoading = {};
   let cur = null, currentTrack = null, wantTrack = null, reqId = 0;
   const useBuffers = () => ctx && !isFile && typeof fetch !== 'undefined';
   function loadTrack(id) {
     if (musicBufs[id]) return Promise.resolve(musicBufs[id]);
-    return fetch('assets/audio/music/' + id + '.mp3').then((r) => (r.ok ? r.arrayBuffer() : Promise.reject()))
+    if (musicLoading[id]) return musicLoading[id];
+    musicLoading[id] = fetch('assets/audio/music/' + id + '.mp3').then((r) => (r.ok ? r.arrayBuffer() : Promise.reject()))
       .then((ab) => new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej)))
       .then((buf) => {
-        musicBufs[id] = buf; musicOrder.push(id);
-        while (musicOrder.length > 2) { const old = musicOrder.shift(); if (old !== currentTrack && old !== wantTrack) delete musicBufs[old]; else musicOrder.push(old); if (musicOrder.length > 3) break; }
+        musicBufs[id] = buf;
+        delete musicLoading[id];
+        // Speicher sparen: höchstens zwei dekodierte Titel behalten
+        const keep = [id, currentTrack, wantTrack];
+        const ids = Object.keys(musicBufs);
+        for (let i = 0; i < ids.length && Object.keys(musicBufs).length > 2; i++) {
+          if (keep.indexOf(ids[i]) < 0) delete musicBufs[ids[i]];
+        }
         return buf;
-      });
+      }, (err) => { delete musicLoading[id]; throw err; });
+    return musicLoading[id];
   }
   function stopCur(ms) {
     const c = cur; cur = null;
@@ -148,8 +156,8 @@
   A.playMusic = function (id, force) {
     wantTrack = id;
     if (!unlocked || musicVol <= 0.001) return;
-    if (id === currentTrack && cur && !force) return;
-    if (id === currentTrack && cur) return;
+    // Läuft oder lädt dieser Titel bereits? Dann nichts tun.
+    if (id === currentTrack && (cur || musicLoading[id])) return;
     currentTrack = id;
     const my = ++reqId;
     if (useBuffers()) {
