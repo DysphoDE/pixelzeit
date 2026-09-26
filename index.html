@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>PIXELZEIT</title>
+<meta name="description" content="Ein Idle-Clicker durch 50 Jahre Gaming-Geschichte – von Pong bis zur Quantenkonsole.">
+<meta name="theme-color" content="#07060d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400..700&family=VT323&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div id="crt" aria-hidden="true"></div>
+
+<div id="app" class="layout-2">
+  <!-- ───────── Kopfzeile ───────── -->
+  <header id="topbar">
+    <div class="brand" title="PIXELZEIT">
+      <span class="logo">PIXEL<b>ZEIT</b></span>
+    </div>
+    <div class="year-box" id="yearBox" title="Aktuelles Jahr">
+      <span class="year" id="yearNow">1972</span>
+      <span class="era-name" id="eraName">Die Pioniere</span>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn np-chip" id="npChip" title="Nostalgie-Punkte" hidden><span class="spr-slot" data-spr="tape"></span><span id="npTop">0</span></button>
+      <button class="icon-btn" id="btnSound" title="Ton an/aus" aria-label="Ton an/aus"><span class="ico-sound"></span></button>
+      <button class="icon-btn" id="btnPause" title="Pause (P)" aria-label="Pause">❚❚</button>
+    </div>
+  </header>
+
+  <!-- ───────── Newsticker ───────── -->
+  <div id="ticker" role="marquee" title="Newsticker">
+    <span class="ticker-tag">NEWS</span>
+    <div class="ticker-track"><span id="tickerText"></span></div>
+  </div>
+
+  <!-- ───────── Bühne ───────── -->
+  <main id="stage">
+    <div class="score">
+      <div class="coins"><span class="spr-slot coin-ico" data-spr="coin"></span><span id="coins">0</span></div>
+      <div class="cps"><span id="cps">0</span> Münzen/s</div>
+    </div>
+
+    <div id="buffs" aria-live="polite"></div>
+
+    <div id="clickZone">
+      <div class="halo"></div>
+      <div class="ring" id="comboRing"></div>
+      <button id="controller" aria-label="Klicken, um Münzen zu verdienen">
+        <img id="ctrlImg" alt="" draggable="false">
+      </button>
+      <div id="clickHint">KLICK MICH!</div>
+      <div id="bossLayer" hidden>
+        <div class="boss-head">
+          <div class="boss-name" id="bossName"></div>
+          <div class="boss-timer" id="bossTimer">0:30</div>
+        </div>
+        <div class="boss-hp"><div class="boss-hp-fill" id="bossHp"></div><span id="bossHpText"></span></div>
+        <img id="bossImg" alt="" draggable="false">
+        <div class="boss-quote" id="bossQuote"></div>
+      </div>
+    </div>
+
+    <div class="combo">
+      <div class="combo-bar"><div class="combo-fill" id="comboFill"></div></div>
+      <div class="combo-label"><span id="comboText">COMBO ×1,0</span><span id="clickVal"></span></div>
+    </div>
+
+    <div class="stage-bottom">
+      <button id="bossBtn" class="boss-btn" disabled>
+        <span class="spr-slot" data-spr="skull"></span>
+        <span class="boss-btn-label" id="bossBtnLabel">Boss lädt …</span>
+        <span class="boss-charge"><span id="bossCharge"></span></span>
+      </button>
+      <button id="eraBtn" class="era-btn">
+        <span class="era-btn-top" id="eraBtnTop">Nächste Epoche</span>
+        <span class="era-btn-main" id="eraBtnMain">—</span>
+        <span class="era-progress"><span id="eraProg"></span></span>
+      </button>
+    </div>
+    <canvas id="fx" aria-hidden="true"></canvas>
+    <div id="floaters" aria-hidden="true"></div>
+    <div id="powerups"></div>
+  </main>
+
+  <!-- ───────── Shop-Spalte (breite Bildschirme) ───────── -->
+  <section id="shopCol" class="col" hidden></section>
+
+  <!-- ───────── Panel mit Tabs ───────── -->
+  <section id="panel" class="col">
+    <nav id="tabs" role="tablist"></nav>
+    <div id="panelBody">
+      <div class="tab-page" id="page-gens" data-tab="gens"></div>
+      <div class="tab-page" id="page-upgrades" data-tab="upgrades"></div>
+      <div class="tab-page" id="page-era" data-tab="era"></div>
+      <div class="tab-page" id="page-loot" data-tab="loot"></div>
+      <div class="tab-page" id="page-ach" data-tab="ach"></div>
+      <div class="tab-page" id="page-perks" data-tab="perks"></div>
+      <div class="tab-page" id="page-museum" data-tab="museum"></div>
+      <div class="tab-page" id="page-stats" data-tab="stats"></div>
+      <div class="tab-page" id="page-options" data-tab="options"></div>
+    </div>
+  </section>
+
+  <!-- ───────── Mobile Navigation ───────── -->
+  <nav id="bottomNav"></nav>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+<div id="tooltip" role="tooltip" hidden></div>
+<div id="modalRoot"></div>
+
+<script src="js/util.js"></script>
+<script src="js/data.js"></script>
+<script src="js/loot.js"></script>
+<script src="js/history.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/credits.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/bg.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
