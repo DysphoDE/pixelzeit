@@ -1008,7 +1008,7 @@
   let lastCoinsTxt = '', lastYear = 0;
   UI.updateStage = function () {
     const S = E.S;
-    const ct = fmt(S.coins);
+    const ct = U.fmt(S.coins, 0, true);
     if (ct !== lastCoinsTxt) { $('#coins').textContent = ct; lastCoinsTxt = ct; }
     $('#cps').textContent = U.fmt(E.cps, 1);
     $('.cps').classList.toggle('boosted', E.cps > E.cpsBase * 1.01);

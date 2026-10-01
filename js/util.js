@@ -21,8 +21,9 @@
     return n.toFixed(d).replace('.', ',');
   }
 
-  /** Formatiert eine Zahl deutsch. dec = Nachkommastellen für kleine Werte. */
-  U.fmt = function (n, dec) {
+  /** Formatiert eine Zahl deutsch. dec = Nachkommastellen für kleine Werte.
+   *  steady = feste Stellenzahl (für den großen Zähler, damit er nicht springt). */
+  U.fmt = function (n, dec, steady) {
     if (n === Infinity) return '∞';
     if (n !== n) return '0';
     if (n < 0) return '-' + U.fmt(-n, dec);
@@ -41,9 +42,10 @@
     }
     const tier = Math.floor(e / 3);
     const v = n / Math.pow(10, tier * 3);
-    const digits = v >= 100 ? 1 : v >= 10 ? 2 : 3;
+    // Höchstens 2 Nachkommastellen – "9,600 Mio." sähe aus wie neuntausendsechshundert
+    const digits = v >= 100 ? 1 : 2;
     let txt = fixedDE(Math.floor(v * Math.pow(10, digits)) / Math.pow(10, digits), digits);
-    if (/,0+$/.test(txt)) txt = txt.replace(/,0+$/, '');
+    if (!steady) txt = txt.replace(/0+$/, '').replace(/,$/, '');
     return txt + ' ' + (U.numFormat === 'long' ? LONG[tier] : SHORT[tier]);
   };
 
