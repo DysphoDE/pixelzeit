@@ -4,11 +4,16 @@
   const PZ = (window.PZ = window.PZ || {});
   const A = (PZ.Audio = {});
 
-  const SFX_IDS = ['click', 'buy', 'upgrade', 'deny', 'crit', 'coin', 'powerup_spawn', 'powerup', 'achievement', 'boss_appear',
-    'boss_hit', 'boss_win', 'boss_lose', 'era', 'loot', 'loot_legendary', 'fever', 'crash', 'tab', 'toggle'];
-  const ERA_MUSIC = ['m0', 'm0', 'm1', 'm2', 'm3', 'm3', 'm4', 'm4', 'm5', 'm5'];
+  const SFX_IDS = ['click', 'buy', 'deny', 'crit', 'coin', 'achievement', 'boss_appear',
+    'boss_hit', 'boss_win', 'boss_lose', 'era', 'loot_legendary', 'fever', 'tab', 'toggle'];
+  // Pegelausgleich je Sample: zu laute Effekte auf etwa -21 dB im Spiel (≈ 4 dB über der Musik)
+  const SFX_VOL = { coin: 0.33, buy: 0.29, deny: 0.56, crit: 0.31, fever: 0.46, achievement: 0.58, era: 0.59,
+    boss_appear: 0.26, boss_win: 0.45, boss_lose: 0.41, tab: 0.52, toggle: 0.33 };
+  // Ohne Ducking: Klicks und Boss-Treffer kommen zu oft, die Musik würde pumpen
+  const NO_DUCK = { click: 1, boss_hit: 1, tab: 1, toggle: 1 };
+  const ERA_MUSIC = ['title', 'm1', 'm1', 'm2', 'm2', 'm4', 'm4', 'm4', 'm5', 'm5'];
 
-  let ctx = null, master = null, sfxGain = null, musicGain = null;
+  let ctx = null, master = null, sfxGain = null, musicGain = null, duckGain = null;
   const buffers = {};
   let sfxVol = 0.7, musicVol = 0.45, unlocked = false;
   const isFile = typeof location !== 'undefined' && location.protocol === 'file:';
@@ -30,7 +35,8 @@
       ctx = new AC();
       master = ctx.createGain(); master.connect(ctx.destination);
       sfxGain = ctx.createGain(); sfxGain.gain.value = sfxVol; sfxGain.connect(master);
-      musicGain = ctx.createGain(); musicGain.gain.value = musicVol; musicGain.connect(master);
+      duckGain = ctx.createGain(); duckGain.connect(master);
+      musicGain = ctx.createGain(); musicGain.gain.value = musicVol; musicGain.connect(duckGain);
     } catch (e) { ctx = null; }
     loadSfx();
     if (wantTrack) A.playMusic(wantTrack, true);
@@ -48,14 +54,12 @@
 
   // Einfache Chiptune-Synth-Sounds als Fallback
   const SYNTH = {
-    click: [['triangle', 330, 0.05, 0.1]], buy: [['square', 660, 0.05], ['square', 990, 0.07]], upgrade: [['square', 523, 0.06], ['square', 659, 0.06], ['square', 784, 0.06], ['square', 1047, 0.12]],
+    click: [['triangle', 330, 0.05, 0.1]], buy: [['square', 660, 0.05], ['square', 990, 0.07]],
     deny: [['sawtooth', 140, 0.14]], crit: [['square', 1200, 0.04], ['triangle', 300, 0.1]], coin: [['square', 988, 0.05], ['square', 1319, 0.12]],
-    powerup_spawn: [['triangle', 1200, 0.05], ['triangle', 1600, 0.05], ['triangle', 2000, 0.08]], powerup: [['square', 523, 0.05], ['square', 784, 0.05], ['square', 1047, 0.05], ['square', 1568, 0.12]],
     achievement: [['square', 784, 0.08], ['square', 988, 0.08], ['square', 1175, 0.08], ['square', 1568, 0.25]], boss_appear: [['sawtooth', 110, 0.3], ['sawtooth', 98, 0.4]],
     boss_hit: [['square', 220, 0.03, 0.1]], boss_win: [['square', 523, 0.1], ['square', 659, 0.1], ['square', 784, 0.1], ['square', 1047, 0.35]], boss_lose: [['triangle', 392, 0.2], ['triangle', 330, 0.2], ['triangle', 262, 0.45]],
-    era: [['square', 392, 0.1], ['square', 523, 0.1], ['square', 659, 0.1], ['square', 784, 0.1], ['square', 1047, 0.4]], loot: [['triangle', 880, 0.06], ['triangle', 1320, 0.1]],
-    loot_legendary: [['square', 659, 0.08], ['square', 880, 0.08], ['square', 1175, 0.08], ['square', 1760, 0.3]], fever: [['sawtooth', 300, 0.08], ['sawtooth', 600, 0.08], ['sawtooth', 1200, 0.2]],
-    crash: [['sawtooth', 200, 0.2], ['sawtooth', 100, 0.3], ['sawtooth', 50, 0.5]], tab: [['square', 1400, 0.015, 0.08]], toggle: [['square', 1000, 0.03, 0.1]],
+    era: [['square', 392, 0.1], ['square', 523, 0.1], ['square', 659, 0.1], ['square', 784, 0.1], ['square', 1047, 0.4]],
+    loot_legendary: [['square', 659, 0.08], ['square', 880, 0.08], ['square', 1175, 0.08], ['square', 1760, 0.3]], fever: [['sawtooth', 300, 0.08], ['sawtooth', 600, 0.08], ['sawtooth', 1200, 0.2]], tab: [['square', 1400, 0.015, 0.08]], toggle: [['square', 1000, 0.03, 0.1]],
   };
   function synth(id, rate) {
     const seq = SYNTH[id];
@@ -64,7 +68,7 @@
     for (const [type, f, dur, vol] of seq) {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.type = type; o.frequency.value = f * (rate || 1);
-      g.gain.setValueAtTime((vol || 0.18), t);
+      g.gain.setValueAtTime((vol || 0.18) * (SFX_VOL[id] || 1), t);
       g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
       o.connect(g); g.connect(sfxGain);
       o.start(t); o.stop(t + dur + 0.02);
@@ -72,10 +76,22 @@
     }
   }
 
+  // Musik kurz absenken, solange ein Effekt spielt
+  let duckUntil = 0;
+  function duck(dur) {
+    if (!duckGain) return;
+    const g = duckGain.gain, t = ctx.currentTime, end = t + Math.min(dur, 2.5);
+    if (end <= duckUntil) return;
+    if (duckUntil < t) { g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(0.55, t + 0.04); }
+    else { g.cancelScheduledValues(duckUntil); }
+    g.setValueAtTime(0.55, end); g.linearRampToValueAtTime(1, end + 0.6);
+    duckUntil = end;
+  }
+
   const lastPlay = {};
   /** Spielt einen Soundeffekt. opts: {rate, vol, throttle(ms)} */
   A.play = function (id, opts) {
-    if (!ctx || sfxVol <= 0.001) return;
+    if (!ctx || sfxVol <= 0.001 || SFX_IDS.indexOf(id) < 0) return;
     opts = opts || {};
     const now = performance.now();
     const th = opts.throttle !== undefined ? opts.throttle : 35;
@@ -83,14 +99,15 @@
     lastPlay[id] = now;
     if (ctx.state === 'suspended') ctx.resume();
     const buf = buffers[id];
-    if (!buf) { synth(id, opts.rate); return; }
+    if (!buf) { synth(id, opts.rate); if (!NO_DUCK[id]) duck(0.3); return; }
     const src = ctx.createBufferSource();
     src.buffer = buf;
     src.playbackRate.value = opts.rate || 1;
     const g = ctx.createGain();
-    g.gain.value = opts.vol !== undefined ? opts.vol : 1;
+    g.gain.value = (opts.vol !== undefined ? opts.vol : 1) * (SFX_VOL[id] || 1);
     src.connect(g); g.connect(sfxGain);
     src.start();
+    if (!NO_DUCK[id]) duck(buf.duration / (opts.rate || 1));
   };
 
   // ───────── Musik ─────────
@@ -152,7 +169,7 @@
     cur = { el: el, id: id };
   }
 
-  A.trackForEra = (era) => ERA_MUSIC[era] || 'm0';
+  A.trackForEra = (era) => ERA_MUSIC[era] || 'm1';
   A.playMusic = function (id, force) {
     wantTrack = id;
     if (!unlocked || musicVol <= 0.001) return;

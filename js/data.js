@@ -5,12 +5,12 @@
 
   // ───────────────────────── Epochen ─────────────────────────
   PZ.ERAS = [
-    { id: 0, name: 'Die Pioniere', short: 'Pioniere', years: [1972, 1976], accent: '#39ff88', accent2: '#b6ffcf', ink: '#d8ffe6', bg: '#030a06', scene: 'phosphor', music: 'm0', ctrl: 'e0', ctrlName: 'Odyssey-Controller', currency: 'Münzen' },
-    { id: 1, name: 'Goldenes Arcade-Zeitalter', short: 'Arcade', years: [1977, 1982], accent: '#ff3fa4', accent2: '#29d3ff', ink: '#ffe8f6', bg: '#0b0316', scene: 'starfield', music: 'm0', ctrl: 'e1', ctrlName: 'Atari-Joystick' },
+    { id: 0, name: 'Die Pioniere', short: 'Pioniere', years: [1972, 1976], accent: '#39ff88', accent2: '#b6ffcf', ink: '#d8ffe6', bg: '#030a06', scene: 'phosphor', music: 'title', ctrl: 'e0', ctrlName: 'Odyssey-Controller', currency: 'Münzen' },
+    { id: 1, name: 'Goldenes Arcade-Zeitalter', short: 'Arcade', years: [1977, 1982], accent: '#ff3fa4', accent2: '#29d3ff', ink: '#ffe8f6', bg: '#0b0316', scene: 'starfield', music: 'm1', ctrl: 'e1', ctrlName: 'Atari-Joystick' },
     { id: 2, name: 'Die 8-Bit-Ära', short: '8-Bit', years: [1983, 1988], accent: '#ff4b3e', accent2: '#7ab0ff', ink: '#fff1ee', bg: '#070b24', scene: 'nes', music: 'm1', ctrl: 'e2', ctrlName: 'NES-Controller' },
     { id: 3, name: 'Der 16-Bit-Konsolenkrieg', short: '16-Bit', years: [1989, 1994], accent: '#3f8cff', accent2: '#ffd23f', ink: '#eef4ff', bg: '#060a1f', scene: 'mode7', music: 'm2', ctrl: 'e3', ctrlName: 'Super-Nintendo-Pad' },
-    { id: 4, name: 'Die 3D-Revolution', short: '3D', years: [1995, 1999], accent: '#19d3c5', accent2: '#ffcc33', ink: '#e8fffc', bg: '#04100f', scene: 'polygon', music: 'm3', ctrl: 'e4', ctrlName: 'N64-Controller' },
-    { id: 5, name: 'Online & 128 Bit', short: 'Online', years: [2000, 2004], accent: '#ff7a1a', accent2: '#5aa2ff', ink: '#fff3ea', bg: '#0e0703', scene: 'network', music: 'm3', ctrl: 'e5', ctrlName: 'GameCube-Controller' },
+    { id: 4, name: 'Die 3D-Revolution', short: '3D', years: [1995, 1999], accent: '#19d3c5', accent2: '#ffcc33', ink: '#e8fffc', bg: '#04100f', scene: 'polygon', music: 'm2', ctrl: 'e4', ctrlName: 'N64-Controller' },
+    { id: 5, name: 'Online & 128 Bit', short: 'Online', years: [2000, 2004], accent: '#ff7a1a', accent2: '#5aa2ff', ink: '#fff3ea', bg: '#0e0703', scene: 'network', music: 'm4', ctrl: 'e5', ctrlName: 'GameCube-Controller' },
     { id: 6, name: 'HD & Bewegung', short: 'HD', years: [2005, 2012], accent: '#86e01e', accent2: '#e9f3ff', ink: '#f3ffe6', bg: '#060b03', scene: 'glossy', music: 'm4', ctrl: 'e6', ctrlName: 'Xbox-360-Controller' },
     { id: 7, name: 'Streaming & Indies', short: 'Streaming', years: [2013, 2019], accent: '#a970ff', accent2: '#ff5c8a', ink: '#f4eeff', bg: '#0a0614', scene: 'stream', music: 'm4', ctrl: 'e7', ctrlName: 'DualShock 4' },
     { id: 8, name: 'Next-Gen', short: 'Next-Gen', years: [2020, 2026], accent: '#43a8ff', accent2: '#f5f8ff', ink: '#eef6ff', bg: '#03070f', scene: 'particles', music: 'm5', ctrl: 'e8', ctrlName: 'DualSense' },

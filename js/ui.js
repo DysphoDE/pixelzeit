@@ -307,7 +307,7 @@
     $('#buyAll').addEventListener('click', () => {
       let n = 0;
       for (const u of E.availableUpgrades()) { if (u.cost <= E.S.coins && E.buyUpgrade(u.id)) n++; else if (u.cost > E.S.coins) break; }
-      if (n) { A.play('upgrade'); UI.toast({ icon: 'bolt', small: 'UPGRADES', title: n + ' Upgrade' + (n > 1 ? 's' : '') + ' gekauft' }); } else A.play('deny');
+      if (n) { UI.toast({ icon: 'bolt', small: 'UPGRADES', title: n + ' Upgrade' + (n > 1 ? 's' : '') + ' gekauft' }); } else A.play('deny');
       UI.renderUpgrades(true);
     });
     $('#upgGrid').addEventListener('click', (e) => {
@@ -325,7 +325,6 @@
   UI.markSel = function () { $$('#upgGrid .upg-t').forEach((t) => t.classList.toggle('sel', t.dataset.id === UI.selUpg)); };
   UI.buyUpg = function (id) {
     if (E.buyUpgrade(id)) {
-      A.play('upgrade');
       UI.selUpg = null;
       UI.renderUpgrades(true);
       UI.updateGens(true);
@@ -501,7 +500,6 @@
       if (e.target.closest('#warOk') && sel.length) {
         E.chooseWar(war.id, sel);
         UI.closeModal(m);
-        A.play('upgrade');
         UI.toast({ icon: 'star', small: 'KONSOLENKRIEG', title: sel.map((id) => war.options.find((o) => o.id === id).name).join(' + ') });
         UI.renderEra(); UI.updateEraBtn();
       }
@@ -518,7 +516,6 @@
     const S = E.S;
     const g = E.crashGain();
     document.body.classList.add('glitching');
-    A.play('crash');
     A.pauseMusic();
     setTimeout(() => {
       document.body.classList.remove('glitching');
@@ -642,7 +639,7 @@
     }
     p.onclick = (e) => {
       const b = e.target.closest('[data-perk]');
-      if (b) { if (E.buyPerk(b.dataset.perk)) { A.play('upgrade'); UI.renderPerks(); UI.updateTop(); } else A.play('deny'); }
+      if (b) { if (E.buyPerk(b.dataset.perk)) { UI.renderPerks(); UI.updateTop(); } else A.play('deny'); }
       const s = e.target.closest('[data-auto]');
       if (s) { const k = s.dataset.auto; S.auto[k] = !S.auto[k]; s.classList.toggle('on', S.auto[k]); A.play('toggle'); }
     };
@@ -985,13 +982,11 @@
     const y = U.rand(Math.min(visH * 0.18, 60), Math.max(80, visH * 0.72 - size));
     el.style.left = x + 'px'; el.style.top = y + 'px';
     $('#powerups').appendChild(el);
-    A.play('powerup_spawn', { vol: 0.8 });
     let done = false;
     const collect = (ev) => {
       if (done) return; done = true;
       if (ev) { ev.preventDefault(); ev.stopPropagation(); }
       const r = E.collectPowerup(type);
-      A.play('powerup');
       const cx = x + size / 2, cy = y + size / 2;
       UI.floater(cx, cy, r.text, 'big');
       if (PZ.FX) PZ.FX.burst(cx, cy, 26, ['#ffd23f', '#ffffff', PZ.ERAS[E.S.era].accent], 260);
@@ -1130,7 +1125,6 @@
       if ((res.isNew && (g.rarity === 'e' || g.rarity === 'l')) || (res.source === 'bin' && res.isNew && g.rarity !== 'c')) {
         setTimeout(() => UI.lootReveal(res), res.source === 'boss' ? 900 : 50);
       } else {
-        A.play('loot', { vol: 0.8 });
         UI.toast({ icon: 'chest', small: (res.isNew ? 'NEUES KULT-SPIEL · ' : 'STUFE ' + res.level + ' · ') + PZ.RARITY[g.rarity].name.toUpperCase(), title: g.name, text: res.maxed ? 'Bereits maximal – +' + fmt(res.refund) + ' Münzen' : PZ.LOOT_FX[g.fx].label(PZ.lootValue(g, res.level, E.M.lootPower), g), cls: g.rarity === 'l' ? 'loot-l' : '' });
       }
       if (UI.visible('loot')) UI.renderLoot();

@@ -1,13 +1,5 @@
 [
  {
-  "id": "m0",
-  "path": "assets/audio/music/m0.mp3",
-  "title": "Invasion.ogg (Chiptune Loops)",
-  "author": "MatiasVME",
-  "license": "CC0",
-  "source": "https://opengameart.org/content/chiptune-loops-0"
- },
- {
   "id": "m1",
   "path": "assets/audio/music/m1.mp3",
   "title": "Level 1 (5 Chiptunes (Action) / Retro Game Music Pack)",
@@ -22,14 +14,6 @@
   "author": "HydroGene",
   "license": "CC0",
   "source": "https://opengameart.org/content/16-bit-battle-theme-i"
- },
- {
-  "id": "m3",
-  "path": "assets/audio/music/m3.mp3",
-  "title": "ld47.wav (Drum and bass)",
-  "author": "bertsz",
-  "license": "CC0",
-  "source": "https://opengameart.org/content/drum-and-bass"
  },
  {
   "id": "m4",
@@ -72,14 +56,6 @@
   "source": "https://opengameart.org/content/512-sound-effects-8-bit-style"
  },
  {
-  "id": "upgrade",
-  "path": "assets/audio/sfx/upgrade.mp3",
-  "title": "sfx_sounds_powerup8.wav (512 Sound Effects (8-bit style))",
-  "author": "Juhani Junkala (SubspaceAudio)",
-  "license": "CC0",
-  "source": "https://opengameart.org/content/512-sound-effects-8-bit-style"
- },
- {
   "id": "deny",
   "path": "assets/audio/sfx/deny.mp3",
   "title": "sfx_sounds_error3.wav (512 Sound Effects (8-bit style))",
@@ -99,22 +75,6 @@
   "id": "coin",
   "path": "assets/audio/sfx/coin.mp3",
   "title": "sfx_coin_single3.wav (512 Sound Effects (8-bit style))",
-  "author": "Juhani Junkala (SubspaceAudio)",
-  "license": "CC0",
-  "source": "https://opengameart.org/content/512-sound-effects-8-bit-style"
- },
- {
-  "id": "powerup_spawn",
-  "path": "assets/audio/sfx/powerup_spawn.mp3",
-  "title": "sfx_sounds_powerup18.wav (512 Sound Effects (8-bit style))",
-  "author": "Juhani Junkala (SubspaceAudio)",
-  "license": "CC0",
-  "source": "https://opengameart.org/content/512-sound-effects-8-bit-style"
- },
- {
-  "id": "powerup",
-  "path": "assets/audio/sfx/powerup.mp3",
-  "title": "sfx_sounds_powerup12.wav (512 Sound Effects (8-bit style))",
   "author": "Juhani Junkala (SubspaceAudio)",
   "license": "CC0",
   "source": "https://opengameart.org/content/512-sound-effects-8-bit-style"
@@ -168,14 +128,6 @@
   "source": "https://opengameart.org/content/8-bit-sound-fx"
  },
  {
-  "id": "loot",
-  "path": "assets/audio/sfx/loot.mp3",
-  "title": "sfx_sound_bling.wav (512 Sound Effects (8-bit style))",
-  "author": "Juhani Junkala (SubspaceAudio)",
-  "license": "CC0",
-  "source": "https://opengameart.org/content/512-sound-effects-8-bit-style"
- },
- {
   "id": "loot_legendary",
   "path": "assets/audio/sfx/loot_legendary.mp3",
   "title": "newthingget.ogg (New thing get!)",
@@ -187,14 +139,6 @@
   "id": "fever",
   "path": "assets/audio/sfx/fever.mp3",
   "title": "sfx_movement_portal1.wav (512 Sound Effects (8-bit style))",
-  "author": "Juhani Junkala (SubspaceAudio)",
-  "license": "CC0",
-  "source": "https://opengameart.org/content/512-sound-effects-8-bit-style"
- },
- {
-  "id": "crash",
-  "path": "assets/audio/sfx/crash.mp3",
-  "title": "sfx_exp_long2.wav (512 Sound Effects (8-bit style))",
   "author": "Juhani Junkala (SubspaceAudio)",
   "license": "CC0",
   "source": "https://opengameart.org/content/512-sound-effects-8-bit-style"

@@ -240,7 +240,6 @@
       '<div class="big-num"><img class="spr" style="width:28px;height:28px" src="' + SPR.url('coin', 3) + '" alt="">+' + U.fmt(coins) + '</div>' +
       (loot ? '<p class="hint">Dazu aus dem Überraschungspaket: <b>' + U.esc(loot.game.name) + '</b></p>' : '') +
       '<div class="modal-actions"><button class="btn" data-close>Danke!</button></div>');
-    A.play('powerup');
   };
 
   // ───────────────────────── Start ─────────────────────────
