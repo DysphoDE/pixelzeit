@@ -190,6 +190,7 @@
     if (meta) meta.content = e.bg;
     PZ.BG.setScene(e.scene, instant);
     A.playMusic(A.trackForEra(era));
+    UI.renderShelf();
   };
 
   // ───────────────────────── Geräte ─────────────────────────
@@ -239,6 +240,92 @@
       UI.updateGens(true);
     } else A.play('deny');
     return got;
+  };
+
+  // ───────────────────────── Regal ─────────────────────────
+  // Gekaufte Geräte der aktuellen Epoche stehen unter dem Controller; Rahmen ab 10/25/50 Stück
+  const SHELF_TIERS = [10, 25, 50];
+  UI.shelf = { era: -1, items: {} };
+  UI.renderShelf = function () {
+    const S = E.S, sh = UI.shelf;
+    if (sh.era !== S.era) {
+      sh.era = S.era; sh.items = {};
+      const row = $('#shelfRow');
+      row.innerHTML = '';
+      PZ.ERAS[S.era].gens.forEach((g) => {
+        const el = document.createElement('div');
+        el.className = 'sh-item' + (isPhoto(g.id) ? ' photo' : '');
+        el.innerHTML = '<img src="' + g.img + '" alt="" draggable="false"><span class="n"></span>';
+        row.appendChild(el);
+        sh.items[g.id] = { el: el, img: $('img', el), n: $('.n', el), owned: -1 };
+      });
+    }
+    for (const id in sh.items) updateShelfItem(id);
+  };
+  function updateShelfItem(id) {
+    const it = UI.shelf.items[id];
+    const owned = E.S.gens[id] || 0;
+    if (owned === it.owned) return;
+    it.owned = owned;
+    const tier = SHELF_TIERS.filter((t) => owned >= t).length;
+    it.el.classList.toggle('empty', !owned);
+    it.el.classList.remove('t1', 't2', 't3');
+    if (tier) it.el.classList.add('t' + tier);
+    it.n.textContent = '×' + owned;
+    it.el.title = PZ.GEN[id].name + (owned ? ' ×' + owned : ' (noch nicht gekauft)');
+  }
+  function restartAnim(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function shelfLanded(it) {
+    restartAnim(it.el, 'pop');
+    const r = it.el.getBoundingClientRect(), s = $('#stage').getBoundingClientRect();
+    if (PZ.FX && r.width) PZ.FX.burst(r.left - s.left + r.width / 2, r.bottom - s.top - 6, 18, ['#ffd23f', '#ffffff', PZ.ERAS[E.S.era].accent], 150);
+  }
+  UI.shelfBought = function (id) {
+    const it = UI.shelf.items[id];
+    if (!it) return;
+    const first = it.owned <= 0;
+    updateShelfItem(id);
+    if (!first) { restartAnim(it.el, 'bump'); return; }
+    // Erstes Exemplar: Foto fliegt aus der Shop-Zeile ins Regal
+    const row = UI.genRows && UI.genRows[id];
+    const src = row && $('.gen-thumb img', row.el);
+    const from = src && src.getBoundingClientRect();
+    const to = it.img.getBoundingClientRect();
+    const visible = from && from.width > 0 && from.bottom > 0 && from.top < window.innerHeight;
+    if (!visible || !to.width || !E.S.settings.motion || !it.img.animate) { shelfLanded(it); return; }
+    const fly = document.createElement('img');
+    fly.className = 'sh-fly'; fly.src = PZ.GEN[id].img; fly.alt = '';
+    fly.style.left = to.left + 'px'; fly.style.top = to.top + 'px';
+    fly.style.width = to.width + 'px'; fly.style.height = to.height + 'px';
+    document.body.appendChild(fly);
+    it.img.style.visibility = 'hidden';
+    const sc = Math.min(from.width / to.width, from.height / to.height);
+    const dx = from.left + from.width / 2 - (to.left + to.width / 2), dy = from.top + from.height / 2 - (to.top + to.height / 2);
+    fly.animate([
+      { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sc + ')', opacity: 0.7 },
+      { transform: 'translate(' + dx * 0.45 + 'px,' + (Math.min(dy, 0) * 0.5 - 90) + 'px) scale(1.5)', opacity: 1, offset: 0.55 },
+      { transform: 'translate(0,0) scale(1)', opacity: 1 },
+    ], { duration: 720, easing: 'cubic-bezier(.3,.1,.3,1)' }).onfinish = () => { fly.remove(); it.img.style.visibility = ''; shelfLanded(it); };
+  };
+  // Geräte werfen ab und zu eine Münze aus – öfter, je mehr sie zur Produktion beitragen
+  UI.shelfTick = function () {
+    if (!E.S.settings.particles || document.hidden || UI.paused) return;
+    const shelf = $('#shelf'), base = shelf.getBoundingClientRect();
+    if (!base.width || shelf.querySelectorAll('.sh-coin').length > 12) return;
+    const total = Math.max(E.cpsBase, 1e-9);
+    for (const id in UI.shelf.items) {
+      const it = UI.shelf.items[id];
+      if (it.owned <= 0) continue;
+      if (Math.random() > 0.15 + ((E.genProd[id] || 0) / total) * 0.75) continue;
+      const r = it.img.getBoundingClientRect();
+      const c = document.createElement('img');
+      c.className = 'sh-coin'; c.src = SPR.url('coin', 2); c.alt = '';
+      c.style.left = (r.left - base.left + r.width * (0.3 + Math.random() * 0.4)) + 'px';
+      c.style.top = (r.top - base.top + r.height * 0.2) + 'px';
+      c.style.animationDelay = (Math.random() * 0.6).toFixed(2) + 's';
+      shelf.appendChild(c);
+      setTimeout(() => c.remove(), 1800);
+    }
   };
 
   UI.renderGens = function () {
@@ -1104,6 +1191,7 @@
   UI.fullRefresh = function () {
     $('#genList').dataset.sig = '';
     UI.renderGens();
+    UI.renderShelf();
     UI.renderUpgrades(true);
     UI.renderTab(UI.tab);
     UI.updateStage();
@@ -1114,6 +1202,8 @@
   // ───────────────────────── Engine-Events ─────────────────────────
   UI.bindEvents = function () {
     PZ.on('spawnPowerup', (type) => { if (!UI.paused) UI.spawnPowerup(type); });
+    PZ.on('buyGen', (id) => UI.shelfBought(id));
+    setInterval(UI.shelfTick, 1400);
     PZ.on('achievement', (a) => {
       A.play('achievement');
       UI.toast({ icon: a.tier === 'p' ? 'gem' : 'trophy', small: 'TROPHÄE FREIGESCHALTET', title: a.name, text: a.desc, cls: 't-' + a.tier });

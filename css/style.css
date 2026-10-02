@@ -198,6 +198,31 @@ body.fever .combo-fill { background: linear-gradient(90deg, #ff3b3b, #ffe23b, #4
 .combo-label #comboText.hot { color: var(--gold); }
 body.fever .combo-label #comboText { color: #ff8a1f; animation: blink 0.4s steps(2) infinite; }
 
+/* Regal: gekaufte Geräte der aktuellen Epoche */
+#shelf { width: min(100%, 560px); z-index: 3; position: relative; flex: none; }
+.shelf-row { display: flex; justify-content: center; align-items: flex-end; gap: clamp(8px, 2.4vw, 22px); height: var(--shelf-h, 76px); padding: 0 14px; }
+.shelf-board { height: 7px; border-radius: 2px; background: linear-gradient(to bottom, color-mix(in srgb, var(--acc) 45%, #2a2438), #0d0a14); box-shadow: 0 0 18px color-mix(in srgb, var(--acc) 22%, transparent), 0 7px 12px rgba(0, 0, 0, 0.65); }
+.sh-item { position: relative; flex: 0 1 96px; min-width: 0; height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.sh-item img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.65)); transform-origin: 50% 100%; }
+.sh-item.photo img { height: 78%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 5px; border: 2px solid rgba(255, 255, 255, 0.16); }
+.sh-item.empty img { filter: brightness(0) drop-shadow(0 0 1px rgba(255, 255, 255, 0.4)); opacity: 0.55; }
+.sh-item.empty.photo img { border-color: transparent; }
+.sh-item .n { position: absolute; right: -6px; top: 0; font-family: var(--f-mono); font-size: 18px; line-height: 1; color: var(--ink); background: rgba(0, 0, 0, 0.72); border: 1px solid var(--line-hi); border-radius: 4px; padding: 1px 4px 0; font-variant-numeric: tabular-nums; }
+.sh-item.empty .n { display: none; }
+.sh-item::after { content: ''; position: absolute; left: 12%; right: 12%; bottom: -5px; height: 6px; border-radius: 50%; background: var(--tier, transparent); filter: blur(5px); opacity: 0.9; pointer-events: none; }
+.sh-item.t1 { --tier: var(--bronze); } .sh-item.t1 .n { border-color: var(--bronze); color: var(--bronze); }
+.sh-item.t2 { --tier: var(--silver); } .sh-item.t2 .n { border-color: var(--silver); color: var(--silver); }
+.sh-item.t3 { --tier: var(--goldt); } .sh-item.t3 .n { border-color: var(--goldt); color: var(--goldt); box-shadow: 0 0 8px color-mix(in srgb, var(--goldt) 50%, transparent); }
+.sh-item.bump img { animation: sh-bump 0.32s ease-out; }
+.sh-item.pop img { animation: sh-pop 0.55s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes sh-bump { 40% { transform: scale(1.08, 0.94); } }
+@keyframes sh-pop { 0% { transform: scale(0.4); } 60% { transform: scale(1.15, 0.9); } 100% { transform: scale(1); } }
+.sh-fly { position: fixed; z-index: 90; pointer-events: none; object-fit: contain; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.6)); }
+.sh-coin { position: absolute; width: 16px; height: 16px; margin-left: -8px; image-rendering: pixelated; animation: sh-coin 1s ease-out both; z-index: 4; pointer-events: none; }
+@keyframes sh-coin { 0% { transform: translateY(0) scale(0.6); opacity: 0; } 20% { opacity: 1; transform: translateY(-10px) scale(1); } 100% { transform: translateY(-46px) scale(0.9); opacity: 0; } }
+body.reduce-motion .sh-item img { animation: none !important; }
+@media (max-height: 700px) { #shelf { --shelf-h: 58px; } }
+
 /* Unterer Bühnenbereich */
 .stage-bottom { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; width: min(100%, 600px); z-index: 3; }
 .boss-btn, .era-btn {
@@ -578,6 +603,8 @@ input.txt { background: #06050b; color: var(--ink); border: 1px solid var(--line
 #app.layout-1.sheet-open .cps { font-size: 17px; }
 #app.layout-1.sheet-open #bossImg { width: min(30%, 16vh); }
 #app.layout-1.sheet-open .boss-quote { display: none; }
+#app.layout-1 #shelf { --shelf-h: 54px; }
+#app.layout-1.sheet-open #shelf { display: none; }
 
 /* ───────── Toasts, Tooltip, Modals ───────── */
 #toasts { position: fixed; top: calc(var(--topbar-h) + var(--ticker-h) + 10px + env(safe-area-inset-top, 0px)); right: 14px; z-index: 80; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none; max-width: calc(100% - 28px); }
