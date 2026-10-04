@@ -21,7 +21,7 @@ Dann `http://localhost:8917` öffnen. (Ein Doppelklick auf `index.html` geht auc
 - Combo-System mit FEVER-Modus, kritische Treffer, Auto-Klicks
 - Power-Ups (Münzregen, Turbo, Klickrausch, Beutekiste, Superstern, 1-UP, Glitch)
 - Bosskämpfe mit 12 Pixel-Art-Bossen (u. a. „Roter Ring des Todes“, „Lootbox-Mimic“, „Scalper-Bot“)
-- ~100 Kult-Spiele als Sammelobjekte mit Seltenheiten und Stufen, Grabbeltisch
+- ~100 Kult-Spiele als Sammelobjekte mit Original-Covern, Seltenheiten und Stufen, Grabbeltisch (Cover aus der englischen Wikipedia bzw. Wikimedia Commons, © der jeweiligen Rechteinhaber)
 - Konsolenkriege (SEGA vs. Nintendo, PC vs. Konsole, …) mit unterschiedlichen Boni
 - Prestige „Der große Crash“ (1983!) mit Nostalgie-Punkten und Hall of Fame (30 Perks inkl. Automatisierung)
 - 229 Trophäen (Bronze bis Platin, inkl. Geheimnisse – Konami-Code, IDDQD …)

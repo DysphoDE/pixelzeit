@@ -628,10 +628,19 @@
 
   // ───────────────────────── Sammlung ─────────────────────────
   function hashHue(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360; return h; }
+  const coverOf = (g) => IMG['cover-' + g.id];
   UI.medium = function (g, owned, big) {
     const hue = hashHue(g.id);
     const lbl = 'hsl(' + hue + ',70%,' + (g.fmt === 'disk' ? 45 : 42) + '%)';
-    return '<div class="med ' + g.fmt + ' r-' + g.rarity + (owned ? '' : ' unknown') + '" style="--lbl:' + lbl + '"><div class="lbl">' + (owned ? esc(g.name) : '?') + '</div></div>';
+    const cv = owned && coverOf(g);
+    return '<div class="med ' + g.fmt + ' r-' + g.rarity + (owned ? '' : ' unknown') + (cv ? ' has-cover' : '') + '" style="--lbl:' + lbl + '"><div class="lbl">' +
+      (cv ? '<img src="' + cv.path + '" alt="" loading="lazy" draggable="false">' : owned ? esc(g.name) : '?') + '</div></div>';
+  };
+  // Großansicht: ganzes Cover, der Datenträger liegt davor
+  UI.coverArt = function (g, owned) {
+    const cv = owned && coverOf(g);
+    if (!cv) return UI.medium(g, owned);
+    return '<div class="cover-art r-' + g.rarity + '"><img src="' + cv.path + '" alt="Cover: ' + esc(g.name) + '" width="' + cv.w + '" height="' + cv.h + '" draggable="false">' + UI.medium(g, true) + '</div>';
   };
   UI.renderLoot = function () {
     const S = E.S;
@@ -677,14 +686,16 @@
     const lp = E.M.lootPower;
     const cur = lv ? PZ.LOOT_FX[g.fx].label(PZ.lootValue(g, lv, lp), g) : '—';
     const nxt = lv < PZ.LOOT_MAX_LEVEL ? PZ.LOOT_FX[g.fx].label(PZ.lootValue(g, lv + 1, lp), g) : 'Maximal';
-    UI.modal('<div class="loot-reveal">' + UI.medium(g, lv > 0) + '<div class="rar" style="color:' + R.color + '">' + R.name.toUpperCase() + '</div><h3>' + (lv ? esc(g.name) : '???') + '</h3><div class="hint">' + g.year + ' · ' + esc(PZ.ERAS[g.era].name) + '</div>' +
+    const cv = lv && coverOf(g);
+    UI.modal('<div class="loot-reveal">' + UI.coverArt(g, lv > 0) + '<div class="rar" style="color:' + R.color + '">' + R.name.toUpperCase() + '</div><h3>' + (lv ? esc(g.name) : '???') + '</h3><div class="hint">' + g.year + ' · ' + esc(PZ.ERAS[g.era].name) + '</div>' +
       (lv ? '<p>' + esc(g.blurb) + '</p><p class="fx">Stufe ' + lv + ': ' + cur + '</p><p class="hint">Nächste Stufe: ' + nxt + '</p>' : '<p class="hint">Noch nicht gefunden. Effekt: ' + PZ.LOOT_FX[g.fx].label(PZ.lootValue(g, 1, lp), g) + '</p>') +
+      (cv ? '<div class="cred">Cover: ' + esc(cv.author || '') + ' · <a href="' + esc(cv.source || '#') + '" target="_blank" rel="noopener">Quelle</a></div>' : '') +
       '</div><div class="modal-actions"><button class="btn" data-close>OK</button></div>');
   };
   UI.lootReveal = function (res) {
     const g = res.game, R = PZ.RARITY[g.rarity];
     A.play(g.rarity === 'l' ? 'loot_legendary' : 'loot');
-    UI.modal('<div class="loot-reveal">' + UI.medium(g, true) + '<div class="rar" style="color:' + R.color + '">' + R.name.toUpperCase() + (res.isNew ? ' · NEU!' : ' · STUFE ' + res.level) + '</div><h3>' + esc(g.name) + '</h3><div class="hint">' + g.year + '</div><p>' + esc(g.blurb) + '</p><p class="fx">' + PZ.LOOT_FX[g.fx].label(PZ.lootValue(g, res.level, E.M.lootPower), g) + '</p></div><div class="modal-actions"><button class="btn" data-close>Ins Regal!</button></div>');
+    UI.modal('<div class="loot-reveal">' + UI.coverArt(g, true) + '<div class="rar" style="color:' + R.color + '">' + R.name.toUpperCase() + (res.isNew ? ' · NEU!' : ' · STUFE ' + res.level) + '</div><h3>' + esc(g.name) + '</h3><div class="hint">' + g.year + '</div><p>' + esc(g.blurb) + '</p><p class="fx">' + PZ.LOOT_FX[g.fx].label(PZ.lootValue(g, res.level, E.M.lootPower), g) + '</p></div><div class="modal-actions"><button class="btn" data-close>Ins Regal!</button></div>');
   };
 
   // ───────────────────────── Trophäen ─────────────────────────
@@ -845,7 +856,7 @@
     const c = PZ.CREDITS || {};
     const img = (c.images || []).map((x) => '<li>' + esc(x.title.replace(/^File:/, '')) + ' – ' + esc(x.author || '?') + ' (' + esc(x.license || '?') + ') <a href="' + esc(x.source) + '" target="_blank" rel="noopener">Quelle</a></li>').join('');
     const aud = (c.audio || []).map((x) => '<li>' + esc(x.id) + ': „' + esc(x.title) + '“ – ' + esc(x.author || '?') + ' (' + esc(x.license || '?') + ') <a href="' + esc(x.source) + '" target="_blank" rel="noopener">Quelle</a></li>').join('');
-    $('#credits').innerHTML = '<p>Fotos: Wikimedia Commons (u. a. Evan-Amos / Vanamo Online Game Museum). Musik & Sounds: OpenGameArt.org (CC0). Schriften: Press Start 2P, Pixelify Sans, VT323 (SIL OFL).</p>' +
+    $('#credits').innerHTML = '<p>Fotos: Wikimedia Commons (u. a. Evan-Amos / Vanamo Online Game Museum). Musik & Sounds: OpenGameArt.org (CC0). Schriften: Press Start 2P, Pixelify Sans, VT323 (SIL OFL). Spiele-Cover: englischsprachige Wikipedia bzw. Wikimedia Commons – © der jeweiligen Rechteinhaber.</p>' +
       (img ? '<details><summary>Bildnachweise (' + (c.images || []).length + ')</summary><ul>' + img + '</ul></details>' : '') +
       (aud ? '<details><summary>Audionachweise (' + (c.audio || []).length + ')</summary><ul>' + aud + '</ul></details>' : '');
   };
