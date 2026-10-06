@@ -84,7 +84,7 @@
     UI.buildUpgradesPage();
     UI.buildOptions();
     UI.layoutCheck();
-    window.addEventListener('resize', () => { clearTimeout(UI._lt); UI._lt = setTimeout(UI.layoutCheck, 120); });
+    window.addEventListener('resize', () => { clearTimeout(UI._lt); UI._lt = setTimeout(() => { UI.layoutCheck(); UI.fitUpgDetail(); }, 120); });
     UI.showTab(UI.layout === 3 ? 'era' : 'gens', true);
     UI.initTooltips();
     UI.initTicker();
@@ -436,6 +436,7 @@
       $('#upgCount').textContent = '(' + Object.keys(E.S.upg).length + '/' + PZ.UPGRADES.length + ')';
       if (UI.selUpg && !list.find((u) => u.id === UI.selUpg)) UI.selUpg = null;
       UI.renderUpgDetail();
+      UI.fitUpgDetail();
       UI.markSel();
     }
     UI.updateUpgrades();
@@ -452,14 +453,25 @@
     const first = E.availableUpgrades()[0];
     $('#buyAll').disabled = !first || first.cost > c;
   };
+  const upgCard = (u) => '<div class="upg-card">' + UI.upgIcon(u) + '<div><h4>' + esc(u.name) + '</h4><p>' + esc(u.desc) + '</p><div class="row"><span class="price">' + coinImg() + fmt(u.cost) + '</span><span style="font-size:12px;color:var(--muted)">' + KIND_NAME[u.kind] + '</span><button class="btn small" data-buy="' + u.id + '">Kaufen</button></div></div></div>';
   UI.renderUpgDetail = function () {
     const box = $('#upgDetail');
     const list = E.availableUpgrades();
     const u = PZ.UPG[UI.selUpg] || list.find((x) => x.cost <= E.S.coins) || list[0];
     if (!u) { box.innerHTML = ''; box.hidden = true; return; }
     box.hidden = false;
-    box.innerHTML = '<div class="upg-card">' + UI.upgIcon(u) + '<div><h4>' + esc(u.name) + '</h4><p>' + esc(u.desc) + '</p><div class="row"><span class="price">' + coinImg() + fmt(u.cost) + '</span><span style="font-size:12px;color:var(--muted)">' + KIND_NAME[u.kind] + '</span><button class="btn small" data-buy="' + u.id + '">Kaufen</button></div></div></div>';
+    box.innerHTML = upgCard(u);
     UI.updateUpgrades();
+  };
+  // Karte so hoch wie die längste verfügbare Beschreibung – sonst springt das Raster darunter beim Überfahren
+  UI.fitUpgDetail = function () {
+    const box = $('#upgDetail');
+    if (!box || box.hidden || !box.offsetWidth) return;
+    box.style.removeProperty('--upg-h');
+    let h = 0;
+    for (const u of E.availableUpgrades()) { box.innerHTML = upgCard(u); h = Math.max(h, box.firstChild.offsetHeight); }
+    box.style.setProperty('--upg-h', h + 'px');
+    UI.renderUpgDetail();
   };
 
   // ───────────────────────── Epoche ─────────────────────────

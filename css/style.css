@@ -319,6 +319,12 @@ body.boss #controller, body.boss #clickHint, body.boss #comboRing { visibility: 
 .tab img { width: 18px; height: 18px; }
 .tab:hover { color: var(--ink); }
 .tab.active { color: var(--ink); border-bottom-color: var(--acc); }
+/* Desktop: alle Tabs ohne Scrollen, in zwei Reihen */
+#app:not(.layout-1) #tabs { flex-wrap: wrap; overflow: visible; padding-top: 4px; }
+#app:not(.layout-1) .tab { flex: 1 1 22%; flex-direction: column; justify-content: center; gap: 2px; padding: 5px 2px 4px; font-size: 13px; line-height: 1.15; }
+#app:not(.layout-1) .tab img { width: 16px; height: 16px; }
+#app.layout-2 .tab { flex-basis: 18%; }
+#app:not(.layout-1) .tab .dot { top: 3px; right: calc(50% - 16px); }
 .tab .dot, .nav-btn .dot { position: absolute; top: 4px; right: 2px; width: 8px; height: 8px; border-radius: 50%; background: var(--bad); box-shadow: 0 0 6px var(--bad); }
 #panelBody { flex: 1; min-height: 0; position: relative; }
 .tab-page { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding: 0 12px 24px; display: none; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.18) transparent; }
@@ -369,11 +375,12 @@ body.boss #controller, body.boss #clickHint, body.boss #comboRing { visibility: 
 
 /* Upgrades */
 .upg-detail { position: sticky; top: 0; z-index: 3; margin: 0 -12px 10px; padding: 12px; background: linear-gradient(to bottom, var(--panel-solid) 85%, transparent); }
-.upg-card { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: start; padding: 10px; border-radius: var(--radius); background: rgba(0, 0, 0, 0.45); border: 1px solid var(--line-hi); min-height: 74px; }
+.upg-card { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: stretch; padding: 10px; border-radius: var(--radius); background: rgba(0, 0, 0, 0.45); border: 1px solid var(--line-hi); min-height: var(--upg-h, 74px); }
+.upg-card > div { display: flex; flex-direction: column; }
 .upg-card .upg-t { width: 52px; height: 52px; }
 .upg-card h4 { margin: 0; font-size: 16px; line-height: 1.2; }
 .upg-card p { margin: 3px 0 6px; font-size: 14px; color: var(--muted); }
-.upg-card .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.upg-card .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
 .upg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); gap: 6px; }
 .upg-t {
   position: relative; aspect-ratio: 1; border-radius: 8px; padding: 0; overflow: hidden;
